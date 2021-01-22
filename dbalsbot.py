@@ -1,6 +1,7 @@
 import discord
 import random
 import requests
+import os
 from bs4 import BeautifulSoup
 
 client = discord.Client()
@@ -295,4 +296,5 @@ async def on_message(message):
 
 
 
-client.run("ODAxNzM4OTE5NjEwODEwMzY5.YAlDjg.vF1MvPgusKv4RozZ81LREqw6m4Q")
+access_token = os.environ['BOT_TOKEN']
+client.run(access_token)
