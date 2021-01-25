@@ -539,13 +539,13 @@ async def on_message(message):
             embed.add_field(name="파킬", value=str(bedwar[108]).split("</td>")[0], inline=True)
             embed.add_field(name="파뎃", value=str(bedwar[109]).split("</td>")[0], inline=True)
             embed.add_field(name="침대 파괴", value=str(bedwar[112]).split("</td>")[0], inline=True)
+            await message.channel.send(embed=embed)
         
         except:
             embed = discord.Embed(title="드발스봇", description=":warning:해당 플레이어의 전적이 존재하지 않습니다.", color=0x1ca54d)
             embed.add_field(name=":small_orange_diamond:사용법", value="/하픽 플레이어닉네임")
-
-        finally:
             await message.channel.send(embed=embed)
+
 
 
 
