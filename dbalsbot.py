@@ -494,36 +494,29 @@ async def on_message(message):
 
             embed = discord.Embed(title="드발스봇", description="다음은 " + name + "님의 하이픽셀 전적입니다.", color=0x1ca54d)
             embed.set_thumbnail(url="https://pbs.twimg.com/profile_images/795149565871558660/egdzdzPd.jpg")
-            await message.channel.send("실행됨1")
 
             nicks = str(soup.select('span')[11:-3]).split('</span>')
             nick = ""
             for i in range(len(nicks)):
                 nick = nick + str(str(nicks[i]).split(">")[-1])
-            await message.channel.send("실행됨2")
 
             nick = nick[:-1].strip()
 
             embed.add_field(name="이름", value=nick, inline=True)
-            await message.channel.send("실행됨3")
 
-            guild = soup.select('a')[22]
-            if '/hypixel/guild/player/' in str(guild):
-                guild = guild.text
-                embed.add_field(name="길드", value=guild, inline=True)
-            await message.channel.send("실행됨4")
+#             guild = soup.select('a')[22]
+#             if '/hypixel/guild/player/' in str(guild):
+#                 guild = guild.text
+#                 embed.add_field(name="길드", value=guild, inline=True)
 
             level = str(str(soup.select('div')[22]).split("Level:</b> ")[1]).split("<br/>")[0]
             
             embed.add_field(name="레벨", value=level, inline=True)
-            await message.channel.send("실행됨5")
 
             karma = str(str(soup.select('div')[22]).split("Karma:</b> ")[1]).split("<br/>")[0]
             embed.add_field(name="카르마", value=karma, inline=True)
-            await message.channel.send("실행됨6")
 
             skywars = soup.select('div.panel-body')[10]
-            await message.channel.send("실행됨7")
 
             embed.add_field(name="<스카이워즈>", value="레벨 " + str(str(skywars).split("Level:</b> ")[1]).split("</li>")[0], inline=False)
             embed.add_field(name="티어", value=str(str(skywars).split("Prestige:</b> ")[1]).split("</li>")[0], inline=True)
