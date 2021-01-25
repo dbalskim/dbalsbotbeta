@@ -517,6 +517,7 @@ async def on_message(message):
             embed.add_field(name="카르마", value=karma, inline=True)
 
             skywars = soup.select('div.panel-body')[10]
+            await message.channel.send(skywars)
 
             embed.add_field(name="<스카이워즈>", value="레벨 " + str(str(skywars).split("Level:</b> ")[1]).split("</li>")[0], inline=False)
             embed.add_field(name="티어", value=str(str(skywars).split("Prestige:</b> ")[1]).split("</li>")[0], inline=True)
