@@ -504,10 +504,10 @@ async def on_message(message):
 
             embed.add_field(name="이름", value=nick, inline=True)
 
-#             guild = soup.select('a')[22]
-#             if '/hypixel/guild/player/' in str(guild):
-#                 guild = guild.text
-#                 embed.add_field(name="길드", value=guild, inline=True)
+            guild = soup.select('a')[22]
+            if '/hypixel/guild/player/' in str(guild):
+                guild = guild.text
+                embed.add_field(name="길드", value=guild, inline=True)
 
             level = str(str(soup.select('div')[22]).split("Level:</b> ")[1]).split("<br/>")[0]
             
