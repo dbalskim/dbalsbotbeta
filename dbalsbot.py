@@ -482,88 +482,6 @@ async def on_message(message):
 
 
 
-    if message.content.startswith("/하픽"):
-        try:
-            message_split = message.content.split()
-            name = message_split[1]
-
-            headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
-            url = 'https://plancke.io/hypixel/player/stats/' + name
-            html = requests.get(url).text
-            await message.channel.send(html)
-            res = requests.get(url, headers=headers)
-            soup = BeautifulSoup(res.content, 'html.parser')
-
-            embed = discord.Embed(title="드발스봇", description="다음은 " + name + "님의 하이픽셀 전적입니다.", color=0x1ca54d)
-            embed.set_thumbnail(url="https://pbs.twimg.com/profile_images/795149565871558660/egdzdzPd.jpg")
-
-            nicks = str(soup.select('span')[11:-3]).split('</span>')
-            nick = ""
-            for i in range(len(nicks)):
-                nick = nick + str(str(nicks[i]).split(">")[-1])
-
-            nick = nick[:-1].strip()
-
-            embed.add_field(name="이름", value=nick, inline=True)
-
-            if i > 2:
-                guild = soup.select('a')[22]
-            else:
-                guild = soup.select('a')[21]
-            if '/hypixel/guild/player/' in str(guild):
-                guild = guild.text
-                embed.add_field(name="길드", value=guild, inline=True)
-
-            level = str(str(soup.select('div')[22]).split("Level:</b> ")[1]).split("<br/>")[0]
-            
-            embed.add_field(name="레벨", value=level, inline=True)
-
-            karma = str(str(soup.select('div')[22]).split("Karma:</b> ")[1]).split("<br/>")[0]
-            embed.add_field(name="카르마", value=karma, inline=True)
-
-
-            if i > 2:
-                skywars = soup.select('div.panel-body')[10]
-            else:
-                skywars = soup.select('div.panel-body')[9]
-                
-
-
-            embed.add_field(name="<스카이워즈>", value="레벨 " + str(str(skywars).split("Level:</b> ")[1]).split("</li>")[0], inline=False)
-            embed.add_field(name="티어", value=str(str(skywars).split("Prestige:</b> ")[1]).split("</li>")[0], inline=True)
-            embed.add_field(name="승리", value=str(str(skywars).split("Wins:</b> ")[1]).split("</li>")[0], inline=True)
-            embed.add_field(name="패배", value=str(str(skywars).split("Losses:</b> ")[1]).split("</li>")[0], inline=True)
-            embed.add_field(name="킬", value=str(str(skywars).split("Kills:</b> ")[1]).split("</li>")[0], inline=True)
-            embed.add_field(name="어시", value=str(str(skywars).split("Assists:</b> ")[1]).split("</li>")[0], inline=True)
-            embed.add_field(name="데스", value=str(str(skywars).split("Deaths:</b> ")[1]).split("</li>")[0], inline=True)
-            embed.add_field(name="킬뎃", value=str(str(skywars).split("Kill/Death Ratio:</b> ")[1]).split("</li>")[0], inline=True)
-
-            if i > 2:
-                bedwars = soup.select('div.panel-body')[3]
-            else:
-                bedwars = soup.select('div.panel-body')[2]
-
-            bedwar = str(bedwars).split("<td>")
-            
-
-            embed.add_field(name="<배드워즈>", value="레벨 " + str(str(bedwars).split("Level:</b> ")[1]).split("</li>")[0], inline=False)
-            embed.add_field(name="승리", value=str(bedwar[110]).split("</td>")[0], inline=True)
-            embed.add_field(name="패배", value=str(bedwar[111]).split("</td>")[0], inline=True)
-            embed.add_field(name="킬", value=str(bedwar[106]).split("</td>")[0], inline=True)
-            embed.add_field(name="데스", value=str(bedwar[107]).split("</td>")[0], inline=True)
-            embed.add_field(name="킬뎃", value=str(str(bedwar[107]).split('#f3f3f3">')[1]).split("</td>")[0], inline=True)
-            embed.add_field(name="파킬", value=str(bedwar[108]).split("</td>")[0], inline=True)
-            embed.add_field(name="파뎃", value=str(bedwar[109]).split("</td>")[0], inline=True)
-            embed.add_field(name="침대 파괴", value=str(bedwar[112]).split("</td>")[0], inline=True)
-            await message.channel.send(embed=embed)
-        
-        except:
-            embed = discord.Embed(title="드발스봇", description=":warning:해당 플레이어의 전적이 존재하지 않습니다.", color=0x1ca54d)
-            embed.add_field(name=":small_orange_diamond:사용법", value="/하픽 플레이어닉네임")
-            await message.channel.send(embed=embed)
-
-
-
 
 
 
@@ -591,7 +509,6 @@ async def on_message(message):
         embed.add_field(name=":small_blue_diamond:롤 게임모드 정보", value="/소환사의 협곡 또는 /칼바람 나락", inline=False)
         embed.add_field(name=":small_blue_diamond:롤 소환사 주문 정보", value="/[소환사 주문]", inline=False)
         embed.add_field(name=":small_blue_diamond:마인리스트 서버 순위", value="/마인리스트", inline=False)
-        embed.add_field(name=":small_blue_diamond:하이픽셀 플레이어 정보", value="/하픽 [플레이어닉네임]", inline=False)
 
         
         await message.channel.send(embed=embed)
