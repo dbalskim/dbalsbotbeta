@@ -496,7 +496,6 @@ async def on_message(message):
             embed.set_thumbnail(url="https://pbs.twimg.com/profile_images/795149565871558660/egdzdzPd.jpg")
 
             nicks = str(soup.select('span')[11:-3]).split('</span>')
-            await message.channel.send(str(soup.select('div')))
             nick = ""
             for i in range(len(nicks)):
                 nick = nick + str(str(nicks[i]).split(">")[-1])
