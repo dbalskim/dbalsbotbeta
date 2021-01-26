@@ -496,7 +496,7 @@ async def on_message(message):
             embed.set_thumbnail(url="https://pbs.twimg.com/profile_images/795149565871558660/egdzdzPd.jpg")
 
             nicks = str(soup.select('span')[11:-3]).split('</span>')
-            await message.channel.send(nicks)
+            await message.channel.send(str(soup.select('span')[11:-3]))
             nick = ""
             for i in range(len(nicks)):
                 nick = nick + str(str(nicks[i]).split(">")[-1])
@@ -504,6 +504,7 @@ async def on_message(message):
             nick = nick[:-1].strip()
 
             embed.add_field(name="이름", value=nick, inline=True)
+            await message.channel.send(guild = soup.select('a'))
 
             if i > 2:
                 guild = soup.select('a')[22]
@@ -512,10 +513,8 @@ async def on_message(message):
             if '/hypixel/guild/player/' in str(guild):
                 guild = guild.text
                 embed.add_field(name="길드", value=guild, inline=True)
-            await message.channel.send(guild)
 
             level = str(str(soup.select('div')[22]).split("Level:</b> ")[1]).split("<br/>")[0]
-            await message.channel.send(level)
             
             embed.add_field(name="레벨", value=level, inline=True)
 
