@@ -489,6 +489,8 @@ async def on_message(message):
 
             headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
             url = 'https://plancke.io/hypixel/player/stats/' + name
+            html = requests.get(url).text
+            await message.channel.send(html)
             res = requests.get(url, headers=headers)
             soup = BeautifulSoup(res.content, 'html.parser')
 
