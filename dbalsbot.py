@@ -137,11 +137,61 @@ async def on_message(message):
                 ranking = ranking.split()
                 embed.add_field(name="래더 랭킹", value=ranking[2] + "위 (상위 " + str(ranking[3])[1:-1] + "프로)", inline=True)
 
+            
+            url2 = 'https://your.gg/kr/profile/' + name
+
+            res2 = requests.get(url2, headers = headers)
+
+            soup2 = BeautifulSoup(res2.content, 'html.parser')
+
+            position = str(soup2.select('img')[20])[46:-7]
+            if "Top" == position:
+                embed.add_field(name="선호 포지션", value="탑", inline=True)
+            
+            elif "Jug" == position:
+                embed.add_field(name="선호 포지션", value="정글", inline=True)
+
+            elif "Mid" == position:
+                embed.add_field(name="선호 포지션", value="미드", inline=True)
+
+            elif "Adc" == position:
+                embed.add_field(name="선호 포지션", value="원딜", inline=True)
+
+            elif "Sup" == position:
+                embed.add_field(name="선호 포지션", value="서폿", inline=True)
+
+            contribution = round(((float(str(str(str(str(soup2.select('div.card-body')[1]).split('<div class="d-flex flex-column align-items-center gg-sub-description mt-3">')[1]).split("</a>")[0])[-30:]).strip()) * 2) / 10), 1)
+            embed.add_field(name="승리 기여도", value="약 " + str(contribution) + "인분", inline=True)
+
+            teamLuck = str(str(str(str(soup2.select('div.card-body')[1]).split('<div class="d-flex flex-column align-items-center gg-sub-description mt-3">')[2]).split("</a>")[0])[-30:]).strip()
+            if "S" == teamLuck:
+                embed.add_field(name="팀운", value="최고", inline=True)
+
+            elif "A" == teamLuck:
+                embed.add_field(name="팀운", value="좋음", inline=True)
+
+            elif "B" == teamLuck:
+                embed.add_field(name="팀운", value="보통", inline=True)
+
+            elif "C" == teamLuck:
+                embed.add_field(name="팀운", value="나쁨", inline=True)
+
+            elif "D" == teamLuck:
+                embed.add_field(name="팀운", value="극악", inline=True)
+
+
+
+            
+
+
+
+
             soloRank = str(soup.select('div.TierRank'))
             if 'Unranked' in soloRank:
                 embed.add_field(name="솔랭:dagger:", value=soloRank[32:-7], inline=False)
             else:
-                embed.add_field(name="솔랭:dagger:", value=soloRank[23:-7], inline=False)
+                solopoint = str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]
+                embed.add_field(name="솔랭:dagger:", value=soloRank[23:-7] + " " + solopoint, inline=False)
             for t in tiers:
                 if t in soloRank:
                     embed.set_thumbnail(url="https:" + tierImage[t])
@@ -150,7 +200,8 @@ async def on_message(message):
             if 'Unranked' in freeRank:
                 embed.add_field(name="자랭:crossed_swords:", value=freeRank[43:-7], inline=False)
             else:
-                embed.add_field(name="자랭:crossed_swords:", value=freeRank[35:-7], inline=False)
+                freepoint = str(str(soup.select('div.sub-tier__league-point')).split('league-point">')[1]).split("<span")[0]
+                embed.add_field(name="자랭:crossed_swords:", value=freeRank[35:-7] + " " + freepoint, inline=False)
 
             mostChamp = str(soup.select('div.ChampionName')[0].text)
             embed.add_field(name="가장 많이 플레이한 챔피언", value=mostChamp, inline=True)
