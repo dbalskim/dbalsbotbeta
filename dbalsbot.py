@@ -8,6 +8,13 @@ client = discord.Client()
 
 emogilist = ('1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟')
 
+tierImage = {'Unrank':'//opgg-static.akamaized.net/images/medals/default.png', 'Iron':'//opgg-static.akamaized.net/images/medals/iron_2.png?image=q_auto:best&v=1', 'Bronze':'//opgg-static.akamaized.net/images/medals/bronze_4.png?image=q_auto:best&v=1',
+                             'Silver':'//opgg-static.akamaized.net/images/medals/silver_2.png?image=q_auto:best&v=1', 'Gold':'//opgg-static.akamaized.net/images/medals/gold_2.png?image=q_auto:best&v=1',
+                             'Platinum':'//opgg-static.akamaized.net/images/medals/platinum_2.png?image=q_auto:best&v=1', 'Diamond':'//opgg-static.akamaized.net/images/medals/diamond_1.png?image=q_auto:best&v=1',
+                             'Master':'//opgg-static.akamaized.net/images/medals/master_1.png?image=q_auto:best&v=1', 'Grandmaster':'//opgg-static.akamaized.net/images/medals/grandmaster_1.png?image=q_auto:best&v=1',
+                             'Challenger':'//opgg-static.akamaized.net/images/medals/challenger_1.png?image=q_auto:best&v=1'}
+tiers = ('Unrank', 'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster', 'Challenger')
+
 @client.event
 async def on_ready():
     print(client.user.id)
@@ -101,12 +108,6 @@ async def on_message(message):
 
     if message.content.startswith("/전적"):
         try:
-            tierImage = {'Unrank':'//opgg-static.akamaized.net/images/medals/default.png', 'Iron':'//opgg-static.akamaized.net/images/medals/iron_2.png?image=q_auto:best&v=1', 'Bronze':'//opgg-static.akamaized.net/images/medals/bronze_4.png?image=q_auto:best&v=1',
-                             'Silver':'//opgg-static.akamaized.net/images/medals/silver_2.png?image=q_auto:best&v=1', 'Gold':'//opgg-static.akamaized.net/images/medals/gold_2.png?image=q_auto:best&v=1',
-                             'Platinum':'//opgg-static.akamaized.net/images/medals/platinum_2.png?image=q_auto:best&v=1', 'Diamond':'//opgg-static.akamaized.net/images/medals/diamond_1.png?image=q_auto:best&v=1',
-                             'Master':'//opgg-static.akamaized.net/images/medals/master_1.png?image=q_auto:best&v=1', 'Grandmaster':'//opgg-static.akamaized.net/images/medals/grandmaster_1.png?image=q_auto:best&v=1',
-                             'Challenger':'//opgg-static.akamaized.net/images/medals/challenger_1.png?image=q_auto:best&v=1'}
-            tiers = ('Unrank', 'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster', 'Challenger')
             message_split = message.content.split()
             name = ''.join(message_split[1:])
             embed = discord.Embed(title="드발스봇", description="다음은 " + name + "님의 op.gg 검색 결과입니다.", color=0x1ca54d)
@@ -121,7 +122,8 @@ async def on_message(message):
             nick = soup.select('span.Name')
             team = str(soup.select('div.Team')[0].text).split()[0]
 
-            
+            await message.channel.send("잠시 시간이 소요될 수 있습니다")
+
 
             if len(nick) == 2:
                 embed.add_field(name=team + " " + nick[0].text, value=nick[1].text, inline=True)
@@ -180,7 +182,8 @@ async def on_message(message):
                 embed.add_field(name="팀운", value="극악", inline=True)
 
 
-
+            kda = soup.select('span.KDARatio')[0].text
+            embed.add_field(name="kda ((킬 + 어시) / 데스)", value=kda, inline=True)
             
 
 
@@ -535,6 +538,33 @@ async def on_message(message):
 
 
 
+    
+    if message.content.startswith("/로테이션"):
+        headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
+        url = 'http://fow.kr/'
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.content, 'html.parser')
+
+        embed = discord.Embed(title="드발스봇", description="다음은 금주의 로테이션 챔피언입니다.", color=0x1ca54d)
+        embed.set_thumbnail(url="https://www.leagueoflegends.co.kr/upload/launcher/697c5444383b318edefe6fea.png")
+
+        rotation = str(str(soup.select('div.news_box')).split("</b>")).split("<b>")
+        i = -1
+        for champ in rotation:
+            i += 1
+            if i == 0:
+                continue
+            embed.add_field(name=i, value=str(champ).split("',")[0], inline=False)
+            if i == 17:
+                break
+        
+        await message.channel.send(embed=embed)
+
+
+
+
+
+
 
 
 
@@ -560,6 +590,7 @@ async def on_message(message):
         embed.add_field(name=":small_blue_diamond:롤 게임모드 정보", value="/소환사의 협곡 또는 /칼바람 나락", inline=False)
         embed.add_field(name=":small_blue_diamond:롤 소환사 주문 정보", value="/[소환사 주문]", inline=False)
         embed.add_field(name=":small_blue_diamond:마인리스트 서버 순위", value="/마인리스트", inline=False)
+        embed.add_field(name=":small_blue_diamond:이번주 로테이션 챔피언 정보", value="/로테이션", inline=False)
 
         
         await message.channel.send(embed=embed)
