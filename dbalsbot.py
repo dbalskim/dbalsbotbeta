@@ -536,8 +536,6 @@ async def on_message(message):
 
 
 
-
-
     
     if message.content.startswith("/로테이션"):
         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
@@ -559,6 +557,58 @@ async def on_message(message):
                 break
         
         await message.channel.send(embed=embed)
+
+
+
+    if message.content.startswith("/랭킹"):
+        await message.channel.send("점수를 집계중입니다...")
+        headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
+        friends = ('유민선', "김유민", '김태연', '이동현', '최은서', '이준서', '최하린', '김현진', '김경빈', '서태민', '진은석', '유태준', '김연성')
+        accounts = {'유민선':'내스피커고오급', "김유민":'악다아아아앙', '김태연':'아임불주먹', '이동현':'옥동자맛있어', '최은서':'악다아아앙', '이준서':'다사태사', '최하린':'BRGSharin', '김현진':'거스윌스킴', '김경빈':'주혁이꼬튜99센티', '서태민':'축구좋아07', '진은석':'민트자비자비', '유태준':'ASilentSword', '김연성':'부평구스타'}
+        score = {'Unranked':0, 'Iron 4':1, 'Iron 3':2, "Iron 2":3, "Iron 1":4, 'Bronze 4':5, 'Bronze 3':6, 'Bronze 2':7, 'Bronze 1':8, 'Silver 4':9, 'Silver 3':10, 'Silver 2':11, 'Silver 1':12, 'Gold 4':13, 'Gold 3':14, 'Gold ':15, 'Gold 1':16}
+        place = {}
+
+        for friend in friends:
+            url = 'https://www.op.gg/summoner/userName=' + accounts[friend]
+            res = requests.get(url, headers=headers)
+            soup = BeautifulSoup(res.content, 'html.parser')
+            soloRank = str(soup.select('div.TierRank'))
+            if 'Unranked' in soloRank:
+                place[friend] = score[soloRank[36:-10]]
+            else:
+                solopoint = str(str(str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]).split("LP")[0])[5:7]
+                place[friend] = float(float(score[soloRank[23:-7]]) + float(solopoint.strip())/100)
+
+        await message.channel.send("점수를 비교중입니다...")
+        ranking = sorted(place, key= lambda x : place[x], reverse = True)
+
+        embed = embed = discord.Embed(title="드발스봇", description="다음은 로우패밀리 리그 오브 레전드 랭킹입니다.", color=0x1ca54d)
+        i = 1
+        for member in ranking:
+            url = 'https://www.op.gg/summoner/userName=' + accounts[member]
+            res = requests.get(url, headers=headers)
+            soup = BeautifulSoup(res.content, 'html.parser')
+            if i == 1:
+                embed.set_thumbnail(url="https:" + str(str(str(soup.select('img.ProfileImage')).split('src="')[1]).split('"/>')[0]))
+
+            soloRank = str(soup.select('div.TierRank'))
+            if 'Unranked' in soloRank:
+                embed.add_field(name=str(i)+"위", value=str(member) + ", " + soloRank[36:-10], inline=False)
+            
+            else:
+                embed.add_field(name=str(i)+"위", value=str(member) + ", " + soloRank[23:-7] + " " + str(str(str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]).split("LP")[0])[5:7]+ " LP", inline=False)
+
+            i += 1
+
+        await message.channel.send(embed=embed)
+
+                    
+
+
+
+
+
+
 
 
 
@@ -591,6 +641,7 @@ async def on_message(message):
         embed.add_field(name=":small_blue_diamond:롤 소환사 주문 정보", value="/[소환사 주문]", inline=False)
         embed.add_field(name=":small_blue_diamond:마인리스트 서버 순위", value="/마인리스트", inline=False)
         embed.add_field(name=":small_blue_diamond:이번주 로테이션 챔피언 정보", value="/로테이션", inline=False)
+        embed.add_field(name=":small_blue_diamond:로우패밀리 롤 랭킹", value="/랭킹", inline=False)
 
         
         await message.channel.send(embed=embed)
