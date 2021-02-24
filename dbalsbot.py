@@ -220,7 +220,8 @@ async def on_message(message):
             
             
 
-            embed.add_field(name="자세한 정보는 op.gg에서 확인하세요", value='https://www.op.gg/summoner/userName=' + name, inline=False)
+            embed.add_field(name="자세한 정보는 op.gg, your.gg에서 확인하세요", value='https://www.op.gg/summoner/userName=' + name"""
+""" + url2, inline=False)
 
 
             await message.channel.send(embed=embed)
