@@ -1,6 +1,6 @@
 import discord
 import random
-import os
+#import os
 import requests
 from bs4 import BeautifulSoup
 
@@ -90,20 +90,20 @@ async def on_message(message):
 
 
 
-    if message.content.startswith("/실검"):
-        embed = discord.Embed(title="드발스봇", description="네이버 실시간 검색어 1 ~ 10위입니다", color=0x1ca54d)
-        embed.set_thumbnail(url="https://t1.daumcdn.net/cfile/tistory/99E493445C0D20A143")
-        json = requests.get("https://www.naver.com/srchrank?frm=main").json()
-        ranks = json.get("data")
-        i = 1
-        for r in ranks:
-            if i >= 11:
-                break
-            else:
-                keyword = r.get("keyword")
-                embed.add_field(name=str(i)+"위", value=keyword, inline=False)
-                i += 1
-        await message.channel.send(embed=embed)
+    # if message.content.startswith("/실검"):
+    #     embed = discord.Embed(title="드발스봇", description="네이버 실시간 검색어 1 ~ 10위입니다", color=0x1ca54d)
+    #     embed.set_thumbnail(url="https://t1.daumcdn.net/cfile/tistory/99E493445C0D20A143")
+    #     json = requests.get("https://www.naver.com/srchrank?frm=main").json()
+    #     ranks = json.get("data")
+    #     i = 1
+    #     for r in ranks:
+    #         if i >= 11:
+    #             break
+    #         else:
+    #             keyword = r.get("keyword")
+    #             embed.add_field(name=str(i)+"위", value=keyword, inline=False)
+    #             i += 1
+    #     await message.channel.send(embed=embed)
 
 
     if message.content.startswith("/전적"):
@@ -146,24 +146,26 @@ async def on_message(message):
 
             soup2 = BeautifulSoup(res2.content, 'html.parser')
 
-            position = str(soup2.select('img')[20])[46:-7]
-            if "Top" == position:
-                embed.add_field(name="선호 포지션", value="탑", inline=True)
-            
-            elif "Jug" == position:
-                embed.add_field(name="선호 포지션", value="정글", inline=True)
-
-            elif "Mid" == position:
-                embed.add_field(name="선호 포지션", value="미드", inline=True)
-
-            elif "Adc" == position:
-                embed.add_field(name="선호 포지션", value="원딜", inline=True)
-
-            elif "Sup" == position:
-                embed.add_field(name="선호 포지션", value="서폿", inline=True)
-
             contribution = round(((float(str(str(str(str(soup2.select('div.card-body')[1]).split('<div class="d-flex flex-column align-items-center gg-sub-description mt-3">')[1]).split("</a>")[0])[-30:]).strip()) * 2) / 10), 1)
             embed.add_field(name="승리 기여도", value="약 " + str(contribution) + "인분", inline=True)
+
+            position = str(soup2.select('img')[20])[46:-7]
+            if "Top" in position:
+                embed.add_field(name="선호 포지션", value="탑", inline=True)
+            
+            elif "Jug" in position:
+                embed.add_field(name="선호 포지션", value="정글", inline=True)
+
+            elif "Mid" in position:
+                embed.add_field(name="선호 포지션", value="미드", inline=True)
+
+            elif "Adc" in position:
+                embed.add_field(name="선호 포지션", value="원딜", inline=True)
+
+            elif "Sup" in position:
+                embed.add_field(name="선호 포지션", value="서폿", inline=True)
+
+
 
             teamLuck = str(str(str(str(soup2.select('div.card-body')[1]).split('<div class="d-flex flex-column align-items-center gg-sub-description mt-3">')[2]).split("</a>")[0])[-30:]).strip()
             if "S" == teamLuck:
@@ -212,6 +214,7 @@ async def on_message(message):
 
             embed.add_field(name="횟수", value=games[0:-7] + " games", inline=True)
 
+
             winRate = str(soup.select('div.WinRatioGraph')[-1].text)
             embed.add_field(name="승률", value=winRate, inline=False)
 
@@ -220,6 +223,7 @@ async def on_message(message):
             
             
 
+            # embed.add_field(name="자세한 정보는 op.gg에서 확인하세요", value='https://www.op.gg/summoner/userName=' + name, inline=False)
             embed.add_field(name="자세한 정보는 op.gg, your.gg에서 확인하세요", value='https://www.op.gg/summoner/userName=' + name + """
 """ + url2, inline=False)
 
@@ -300,10 +304,16 @@ async def on_message(message):
     if message.content.startswith("/챔피언"):
         try:
             message_split = message.content.split()
-            champ = str(message_split[1:])[2:-2]
+            if len(message_split[1:]) == 2:
+                champ = str(message_split[1]) + (message_split[2])
+            else:
+                champ = str(message_split[1:])[2:-2]
 
             headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
-            url = 'https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&query=%EB%A6%AC%EA%B7%B8+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C+' + champ
+            if champ == "렐":
+                url = "https://search.naver.com/search.naver?where=nexearch&query=%EB%A6%AC%EA%B7%B8+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C+%EB%A0%90&sm=tab_org&qvt=0"
+            else:
+                url = 'https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&query=%EB%A6%AC%EA%B7%B8+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C+' + champ
             res = requests.get(url, headers=headers)
             soup = BeautifulSoup(res.content, 'html.parser')
 
@@ -323,12 +333,16 @@ async def on_message(message):
             champloc = str(soup.select('div.info_group')[2]).split("<dd>")[1][1:-12]
             embed.add_field(name="지역", value=champloc, inline=True)
 
-            if champ == "아트록스" or champ == "그레이브즈":
+            if champ == "아트록스" or champ == "그웬" or champ == "베이가" or champ == "샤코" or champ == "이렐리아" or champ == "나르" or champ == "자야" or champ == "퀸" or champ == "케이틀린" or champ == "자크" or champ == "갈리오" or champ == "칼리스타":
                 champDesc = str(soup.select('span')[72]).split('<br/>')
                 champDescs = ""
 
+            elif champ == "그레이브즈":
+                champDesc = str(soup.select('span')[69]).split('<br/>')
+                champDescs = ""
+
             else:
-                champDesc = str(soup.select('span')[70]).split('<br/>')
+                champDesc = str(soup.select('span')[69]).split('<br/>')
                 champDescs = ""
             for i in range(1, len(champDesc)):
                 champDescs = champDescs + champDesc[i]
@@ -537,6 +551,83 @@ async def on_message(message):
 
 
 
+    # if message.content.startswith("/하픽"):
+    #     try:
+    #         message_split = message.content.split()
+    #         name = message_split[1]
+
+    #         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
+    #         url = 'https://plancke.io/hypixel/player/stats/' + name
+    #         res = requests.get(url, headers=headers)
+    #         soup = BeautifulSoup(res.content, 'html.parser')
+
+    #         embed = discord.Embed(title="드발스봇", description="다음은 " + name + "님의 하이픽셀 전적입니다.", color=0x1ca54d)
+    #         embed.set_thumbnail(url="https://pbs.twimg.com/profile_images/795149565871558660/egdzdzPd.jpg")
+
+    #         nicks = str(soup.select('span')[11:-3]).split('</span>')
+    #         nick = ""
+    #         for i in range(len(nicks)):
+    #             nick = nick + str(str(nicks[i]).split(">")[-1])
+
+    #         nick = nick[:-1].strip()
+
+    #         embed.add_field(name="이름", value=nick, inline=True)
+
+    #         if i > 2:
+    #             guild = soup.select('a')[22]
+    #         else:
+    #             guild = soup.select('a')[21]
+    #         if '/hypixel/guild/player/' in str(guild):
+    #             guild = guild.text
+    #             embed.add_field(name="길드", value=guild, inline=True)
+
+    #         level = str(str(soup.select('div')[22]).split("Level:</b> ")[1]).split("<br/>")[0]
+            
+    #         embed.add_field(name="레벨", value=level, inline=True)
+
+    #         karma = str(str(soup.select('div')[22]).split("Karma:</b> ")[1]).split("<br/>")[0]
+    #         embed.add_field(name="카르마", value=karma, inline=True)
+
+
+    #         if i > 2:
+    #             skywars = soup.select('div.panel-body')[10]
+    #         else:
+    #             skywars = soup.select('div.panel-body')[9]
+
+
+    #         embed.add_field(name="<스카이워즈>", value="레벨 " + str(str(skywars).split("Level:</b> ")[1]).split("</li>")[0], inline=False)
+    #         embed.add_field(name="티어", value=str(str(skywars).split("Prestige:</b> ")[1]).split("</li>")[0], inline=True)
+    #         embed.add_field(name="승리", value=str(str(skywars).split("Wins:</b> ")[1]).split("</li>")[0], inline=True)
+    #         embed.add_field(name="패배", value=str(str(skywars).split("Losses:</b> ")[1]).split("</li>")[0], inline=True)
+    #         embed.add_field(name="킬", value=str(str(skywars).split("Kills:</b> ")[1]).split("</li>")[0], inline=True)
+    #         embed.add_field(name="어시", value=str(str(skywars).split("Assists:</b> ")[1]).split("</li>")[0], inline=True)
+    #         embed.add_field(name="데스", value=str(str(skywars).split("Deaths:</b> ")[1]).split("</li>")[0], inline=True)
+    #         embed.add_field(name="킬뎃", value=str(str(skywars).split("Kill/Death Ratio:</b> ")[1]).split("</li>")[0], inline=True)
+
+    #         if i > 2:
+    #             bedwars = soup.select('div.panel-body')[3]
+    #         else:
+    #             bedwars = soup.select('div.panel-body')[2]
+
+    #         bedwar = str(bedwars).split("<td>")
+            
+
+    #         embed.add_field(name="<배드워즈>", value="레벨 " + str(str(bedwars).split("Level:</b> ")[1]).split("</li>")[0], inline=False)
+    #         embed.add_field(name="승리", value=str(bedwar[110]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="패배", value=str(bedwar[111]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="킬", value=str(bedwar[106]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="데스", value=str(bedwar[107]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="킬뎃", value=str(str(bedwar[107]).split('#f3f3f3">')[1]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="파킬", value=str(bedwar[108]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="파뎃", value=str(bedwar[109]).split("</td>")[0], inline=True)
+    #         embed.add_field(name="침대 파괴", value=str(bedwar[112]).split("</td>")[0], inline=True)
+    #         await message.channel.send(embed=embed)
+        
+    #     except:
+    #         embed = discord.Embed(title="드발스봇", description=":warning:해당 플레이어의 전적이 존재하지 않습니다.", color=0x1ca54d)
+    #         embed.add_field(name=":small_orange_diamond:사용법", value="/하픽 플레이어닉네임")
+    #         await message.channel.send(embed=embed)
+
     
     if message.content.startswith("/로테이션"):
         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
@@ -564,8 +655,8 @@ async def on_message(message):
     if message.content.startswith("/랭킹"):
         await message.channel.send("점수를 집계중입니다...")
         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'}
-        friends = ('유민선', "김유민", '김태연', '이동현', '최은서', '이준서', '최하린', '김현진', '김경빈', '서태민', '진은석', '유태준', '김연성')
-        accounts = {'유민선':'내스피커고오급', "김유민":'악다아아아앙', '김태연':'아임불주먹', '이동현':'옥동자맛있어', '최은서':'악다아아앙', '이준서':'다사태사', '최하린':'BRGSharin', '김현진':'거스윌스킴', '김경빈':'주혁이꼬튜99센티', '서태민':'축구좋아07', '진은석':'민트자비자비', '유태준':'ASilentSword', '김연성':'부평구스타'}
+        friends = ('유민선', "김유민", '김태연', '이동현', '최은서', '이준서', '최하린', '김현진', '김경빈', '서태민', '진은석', '유태준', '김연성', '이준아')
+        accounts = {'유민선':'내스피커고오급', "김유민":'악다아아아앙', '김태연':'아임불주먹', '이동현':'옥동자맛있어', '최은서':'악다아아앙', '이준서':'다사태사', '최하린':'BRGSharin', '김현진':'거스윌스킴', '김경빈':'주혁이꼬튜99센티', '서태민':'축구좋아07', '진은석':'민트자비자비', '유태준':'ASilentSword', '김연성':'부평구스타', '이준아':'지상최강태진아'}
         score = {'Unranked':0, 'Iron 4':1, 'Iron 3':2, "Iron 2":3, "Iron 1":4, 'Bronze 4':5, 'Bronze 3':6, 'Bronze 2':7, 'Bronze 1':8, 'Silver 4':9, 'Silver 3':10, 'Silver 2':11, 'Silver 1':12, 'Gold 4':13, 'Gold 3':14, 'Gold ':15, 'Gold 1':16}
         place = {}
 
@@ -577,7 +668,7 @@ async def on_message(message):
             if 'Unranked' in soloRank:
                 place[friend] = score[soloRank[36:-10]]
             else:
-                solopoint = str(str(str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]).split("LP")[0])[5:7]
+                solopoint = str(str(str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]).split("LP")[0])[5:]
                 place[friend] = float(float(score[soloRank[23:-7]]) + float(solopoint.strip())/100)
 
         await message.channel.send("점수를 비교중입니다...")
@@ -597,7 +688,7 @@ async def on_message(message):
                 embed.add_field(name=str(i)+"위", value=str(member) + ", " + soloRank[36:-10], inline=False)
             
             else:
-                embed.add_field(name=str(i)+"위", value=str(member) + ", " + soloRank[23:-7] + " " + str(str(str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]).split("LP")[0])[5:7]+ " LP", inline=False)
+                embed.add_field(name=str(i)+"위", value=str(member) + ", " + soloRank[23:-7] + " " + str(str(str(str(soup.select('span.LeaguePoints')).split('LeaguePoints">')[1]).split("</span>")[0]).split("LP")[0])[5:]+ " LP", inline=False)
 
             i += 1
 
@@ -632,7 +723,7 @@ async def on_message(message):
         embed.add_field(name=":small_blue_diamond:호출", value="하이 드발스", inline=False)
         embed.add_field(name=":small_blue_diamond:투표", value="/투표 [투표주제] [항목1] [항목2] ⋯", inline=False)
         embed.add_field(name=":small_blue_diamond:팀 뽑기", value="/팀 뽑기 [이름] [이름] ⋯", inline=False)
-        embed.add_field(name=":small_blue_diamond:네이버 실시간 검색어 확인", value="/실검", inline=False)
+        # embed.add_field(name=":small_blue_diamond:네이버 실시간 검색어 확인", value="/실검", inline=False)
         embed.add_field(name=":small_blue_diamond:롤 전적 검색", value="/전적 [소환사닉네임]", inline=False)
         embed.add_field(name=":small_blue_diamond:날씨 확인", value="/날씨 [지역]", inline=False)
         embed.add_field(name=":small_blue_diamond:코로나 현황 확인", value="/코로나", inline=False)
@@ -641,7 +732,8 @@ async def on_message(message):
         embed.add_field(name=":small_blue_diamond:롤 게임모드 정보", value="/소환사의 협곡 또는 /칼바람 나락", inline=False)
         embed.add_field(name=":small_blue_diamond:롤 소환사 주문 정보", value="/[소환사 주문]", inline=False)
         embed.add_field(name=":small_blue_diamond:마인리스트 서버 순위", value="/마인리스트", inline=False)
-        embed.add_field(name=":small_blue_diamond:이번주 로테이션 챔피언 정보", value="/로테이션", inline=False)
+        # embed.add_field(name=":small_blue_diamond:하이픽셀 플레이어 정보", value="/하픽 [플레이어닉네임]", inline=False)
+        embed.add_field(name=":small_blue_diamond:금주의 로테이션 챔피언", value="/로테이션", inline=False)
         embed.add_field(name=":small_blue_diamond:로우패밀리 롤 랭킹", value="/랭킹", inline=False)
 
         
